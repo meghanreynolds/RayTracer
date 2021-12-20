@@ -2,6 +2,9 @@
 #include <fstream>
 #include <string>
 
+#include "vec3.h"
+#include "vec3.cpp"
+
 void outputBasicImageToFile(std::string file_name) {
   std::ofstream image_file = std::ofstream(file_name, std::ios::ate);
   if (image_file.is_open()){
@@ -16,7 +19,6 @@ void outputBasicImageToFile(std::string file_name) {
 
     // Write RGB triplets to the file
     const double kBlue = 0.25;
-    const int kIntBlue = static_cast<int>(255.999 * kBlue);
     // pixels are written out in rows from top to bottom that go left to right
     // green depends on i and goes from fully on to fully off
     for (int i = kImageSize - 1; i >= 0; --i) {
@@ -27,9 +29,9 @@ void outputBasicImageToFile(std::string file_name) {
         const double kRed = double(j) / (kImageSize - 1);
         const double kGreen = double(i) / (kImageSize - 1);
 
-        const int kIntRed = static_cast<int>(255.999 * kRed);
-        const int kIntGreen = static_cast<int>(255.999 * kGreen);
-        image_file << kIntRed << ' ' << kIntGreen << ' ' << kIntBlue << '\n';
+        const color kPixelColor = color(kRed, kGreen, kBlue);
+        // add pixel to the ppm file
+        writeColor(image_file, kPixelColor);
       }
     }
   }
