@@ -55,10 +55,20 @@ class ray {
 // Utility Functions for Rays
 
 /**
- * This function finds the color of the pixel the ray passes through based 
- * on the y component of the given ray
+ * This functions determines whether or not the sphere with the given center
+ * and radius was hit by the given ray
+ * 
+ * @param kSphereCenter constant reference to a point3 representing the center of the sphere
+ * @param radius double representing the radius of the Sphere
+ * @param kRay constant reference to the ray to check if it hits the given sphere
+ * @return a bool that is true if the given ray hits the given sphere and false otherwise
+ */
+bool sphereWasHit(const point3& kSphereCenter, double radius, const ray& kRay);
+
+/**
+ * This function finds the color of the pixel the ray passes through
  * 
  * @param kRay constant reference to a ray to determine the pixel color for
- * @return a color determined by the y component of the given ray
+ * @return a color determined by the scene in front of the camera
  */
 color rayColor(const ray& kRay);

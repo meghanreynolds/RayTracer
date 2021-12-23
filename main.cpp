@@ -7,7 +7,7 @@
 #include "vec3.h"
 #include "vec3.cpp"
 
-void blueToWhiteGradient(std::string file_name) {
+void basicSphere(std::string file_name) {
   std::ofstream image_file = std::ofstream(file_name, std::ios::ate);
   if (image_file.is_open()){
     // P3 means that the colors are in ASCII
@@ -87,6 +87,6 @@ void outputBasicImageToFile(std::string file_name) {
 
 int main() {
   outputBasicImageToFile("results/basicImage.ppm");
-  blueToWhiteGradient("results/blueToWhiteGradient.ppm");
+  basicSphere("results/basicSphere.ppm");
   return 0;
 }
