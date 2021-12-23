@@ -2,8 +2,54 @@
 #include <fstream>
 #include <string>
 
+#include "ray.h"
+#include "ray.cpp"
 #include "vec3.h"
 #include "vec3.cpp"
+
+void blueToWhiteGradient(std::string file_name) {
+  std::ofstream image_file = std::ofstream(file_name, std::ios::ate);
+  if (image_file.is_open()){
+    // P3 means that the colors are in ASCII
+    image_file << "P3\n";
+    // Specifies image width and height
+    const double kAspectRatio = 16.0 / 9.0;
+    const int kImageWidth = 400;
+    const int kImageHeight = static_cast<int>(kImageWidth / kAspectRatio);
+    image_file << kImageWidth << " " << kImageHeight << "\n";
+    // Camera Specifications
+    const double kViewportHeight = 2.0;
+    const double kViewportWidth = kAspectRatio * kViewportHeight;
+    const double kFocalLength = 1.0;
+
+    const point3 kOrigin = point3(); // point3 defaults to be the zero vector
+    const vec3 kHorizontalDirection = vec3(kViewportWidth, 0, 0);
+    const vec3 kVerticalDirection = vec3(0, kViewportHeight, 0);
+    const point3 kLowerLeftCorner = kOrigin - (kHorizontalDirection / 2) - (kVerticalDirection / 2)
+        - vec3(0, 0, kFocalLength);
+
+    // Specifies the max color for the RGB triplets
+    const int kMaxColor = 255;
+    image_file << kMaxColor << "\n";
+
+    // Write RGB triplets to the file
+    // pixels are written out in rows from top to bottom that go left to right
+    for (int i = kImageHeight - 1; i >= 0; --i) {
+      std::cerr << "\rScanlines remaining: " << i << ' ' << std::flush;
+      for (int j = 0; j < kImageWidth; ++j) {
+        const double kHorizontalFactor = double(j) / (kImageWidth - 1);
+        const double kVerticalFactor = double(i) / (kImageHeight - 1);
+        const vec3 kRayDirection = kLowerLeftCorner + (kHorizontalDirection * kHorizontalFactor) 
+            + (kVerticalDirection * kVerticalFactor) - kOrigin;
+        const ray kRay = ray(kOrigin, kRayDirection);
+        // add pixel to the ppm file
+        writeColor(image_file, rayColor(kRay));
+      }
+    }
+  }
+  image_file.close();
+  std::cerr << "\nDone.\n";
+}
 
 void outputBasicImageToFile(std::string file_name) {
   std::ofstream image_file = std::ofstream(file_name, std::ios::ate);
@@ -41,5 +87,6 @@ void outputBasicImageToFile(std::string file_name) {
 
 int main() {
   outputBasicImageToFile("results/basicImage.ppm");
+  blueToWhiteGradient("results/blueToWhiteGradient.ppm");
   return 0;
 }

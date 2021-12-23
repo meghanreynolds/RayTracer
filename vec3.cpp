@@ -56,7 +56,7 @@ double vec3::length() const {
 }
 
 double vec3::lengthSquared() const {
-  return (data_[kXIndex] * data_[kXIndex]) + (data_[kYIndex] * data_[kYIndex]) + (data_[kZIndex] + data_[kZIndex]);
+  return (data_[kXIndex] * data_[kXIndex]) + (data_[kYIndex] * data_[kYIndex]) + (data_[kZIndex] * data_[kZIndex]);
 }
 
 inline std::ostream& operator<<(std::ostream& stream, const vec3& kVectorToPrint) {
