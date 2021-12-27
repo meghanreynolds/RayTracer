@@ -87,6 +87,6 @@ void outputBasicImageToFile(std::string file_name) {
 
 int main() {
   outputBasicImageToFile("results/basicImage.ppm");
-  basicSphere("results/basicSphere.ppm");
+  basicSphere("results/visualizingSurfaceNormals.ppm");
   return 0;
 }

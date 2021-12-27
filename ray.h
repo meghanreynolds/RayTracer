@@ -55,15 +55,16 @@ class ray {
 // Utility Functions for Rays
 
 /**
- * This functions determines whether or not the sphere with the given center
- * and radius was hit by the given ray
+ * This functions determines the t value at which the sphere with the given center
+ * and radius was hit by the given ray, returns -1.0 if not hit
  * 
  * @param kSphereCenter constant reference to a point3 representing the center of the sphere
  * @param radius double representing the radius of the Sphere
  * @param kRay constant reference to the ray to check if it hits the given sphere
- * @return a bool that is true if the given ray hits the given sphere and false otherwise
+ * @return a double that represents the t value at which the sphere was hit by 
+ *    the ray, -1.0 if not hit
  */
-bool sphereWasHit(const point3& kSphereCenter, double radius, const ray& kRay);
+double hitSphere(const point3& kSphereCenter, double radius, const ray& kRay);
 
 /**
  * This function finds the color of the pixel the ray passes through
