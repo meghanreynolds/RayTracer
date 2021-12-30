@@ -3,6 +3,8 @@
 #include <string>
 
 #include "Hittable.h"
+#include "hittable_list.h"
+#include "hittable_list.cpp"
 #include "ray.h"
 #include "ray.cpp"
 #include "sphere.h"
@@ -13,16 +15,20 @@
 
 
 color rayColor(const ray& kRay) {
+  // create sphere to add to the scene
   const point3 kSphereCenter = point3(0, 0, -1);
   const double kSphereRadius = 0.5;
-  const sphere kSphere = sphere(kSphereCenter, kSphereRadius);
-  const color kRed = color(1, 0, 0);
-  HitRecord sphere_hit_record = HitRecord();
-  const bool kWasHit = kSphere.wasHit(kRay, 0, 1, sphere_hit_record);
-  const double kT = sphere_hit_record.t_;
-  // ensure the ray hits the sphere before visualizing surface normals
+  sphere sphere_one = sphere(kSphereCenter, kSphereRadius);
+  
+  // create list of objects in the scene and find closest hit object 
+  hittable_list list = hittable_list(std::make_shared<sphere>(sphere_one));
+  HitRecord hit_record = HitRecord();
+  const bool kWasHit = list.wasHit(kRay, 0, 1, hit_record);
+  const double kT = hit_record.t_;
+
+  // ensure the ray hits an object before visualizing surface normals
   if (kWasHit) {
-    const vec3 kUnitSurfaceNormal = sphere_hit_record.surface_normal_;
+    const vec3 kUnitSurfaceNormal = hit_record.surface_normal_;
     // adding 1 to each component ensures each component >= 0 and 
     // multiplting by 0.5 ensures each component <= 1
     return color(kUnitSurfaceNormal.x() + 1, kUnitSurfaceNormal.y() + 1, 

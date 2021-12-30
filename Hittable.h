@@ -53,12 +53,12 @@ class Hittable {
      * in the given range of values for t
      * 
      * Updates the hit record with the closest point of intersection, corresponding t value, 
-     * and the unit surface normal
+     * and the unit surface normal, and whether the ray intersects the hit object from the inside
+     * or the outside
      * 
      * NOTE: If not overridden, always returns false
      * 
-     * @param kRay constant reference to the ray to check if it hits the 
-     *     given hittable object
+     * @param kRay constant reference to the ray to check if it hits the hittable object
      * @param min_t double representing the minimum t value for the intersection
      * @param max_t double representing the maximum t value for the intersection
      * @param hit_record reference to a hit record to update with the details of the intersection of the ray
