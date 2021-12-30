@@ -1,31 +1,31 @@
 #include "vec3.h"
 
 vec3::vec3() {
-  data_[kXIndex] = 0.0;
-  data_[kYIndex] = 0.0;
-  data_[kZIndex] = 0.0;
+  data_[x_index_] = 0.0;
+  data_[y_index_] = 0.0;
+  data_[z_index_] = 0.0;
 }
 
 vec3::vec3(double value1, double value2, double value3) {
-  data_[kXIndex] = value1;
-  data_[kYIndex] = value2;
-  data_[kZIndex] = value3;
+  data_[x_index_] = value1;
+  data_[y_index_] = value2;
+  data_[z_index_] = value3;
 }
 
 double vec3::x() const {
-  return data_[kXIndex];
+  return data_[x_index_];
 }
 
 double vec3::y() const {
-  return data_[kYIndex];
+  return data_[y_index_];
 }
 
 double vec3::z() const {
-  return data_[kZIndex];
+  return data_[z_index_];
 }
 
 vec3 vec3::operator-() const {
-  return vec3(-1 * data_[kXIndex], -1 * data_[kYIndex], -1 * data_[kZIndex]);
+  return vec3(-1 * data_[x_index_], -1 * data_[y_index_], -1 * data_[z_index_]);
 }
 
 double vec3::operator[](int i) const {
@@ -33,16 +33,16 @@ double vec3::operator[](int i) const {
 }
 
 vec3& vec3::operator+=(const vec3& kToAdd) {
-  data_[kXIndex] += kToAdd.x();
-  data_[kYIndex] += kToAdd.y();
-  data_[kZIndex] += kToAdd.z();
+  data_[x_index_] += kToAdd.x();
+  data_[y_index_] += kToAdd.y();
+  data_[z_index_] += kToAdd.z();
   return *this;
 }
 
 vec3& vec3::operator*=(const double kScalarMultiple) {
-  data_[kXIndex] *= kScalarMultiple;
-  data_[kYIndex] *= kScalarMultiple;
-  data_[kZIndex] *= kScalarMultiple;
+  data_[x_index_] *= kScalarMultiple;
+  data_[y_index_] *= kScalarMultiple;
+  data_[z_index_] *= kScalarMultiple;
   return *this;
 }
 
@@ -56,7 +56,7 @@ double vec3::length() const {
 }
 
 double vec3::lengthSquared() const {
-  return (data_[kXIndex] * data_[kXIndex]) + (data_[kYIndex] * data_[kYIndex]) + (data_[kZIndex] * data_[kZIndex]);
+  return (data_[x_index_] * data_[x_index_]) + (data_[y_index_] * data_[y_index_]) + (data_[z_index_] * data_[z_index_]);
 }
 
 inline std::ostream& operator<<(std::ostream& stream, const vec3& kVectorToPrint) {

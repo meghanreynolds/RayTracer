@@ -112,13 +112,13 @@ class vec3 {
     double data_[3];
     
     // size_t storing the index in data_ of the x (first) value
-    const size_t kXIndex = 0;
+    size_t x_index_ = 0;
 
     // size_t storing the index in data_ of the y (second) value
-    const size_t kYIndex = 1;
+    size_t y_index_ = 1;
 
-    // size_t stroing the index in data_ of the x (third) value
-    const size_t kZIndex = 2;
+    // size_t storing the index in data_ of the z (third) value
+    size_t z_index_ = 2;
 };
 
 // Type aliases for vec3 (point3 and color)

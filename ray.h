@@ -51,25 +51,3 @@ class ray {
     // vec3 storing the ray's direction vector
     vec3 direction_;
 };
-
-// Utility Functions for Rays
-
-/**
- * This functions determines the t value at which the sphere with the given center
- * and radius was hit by the given ray, returns -1.0 if not hit
- * 
- * @param kSphereCenter constant reference to a point3 representing the center of the sphere
- * @param radius double representing the radius of the Sphere
- * @param kRay constant reference to the ray to check if it hits the given sphere
- * @return a double that represents the t value at which the sphere was hit by 
- *    the ray, -1.0 if not hit
- */
-double hitSphere(const point3& kSphereCenter, double radius, const ray& kRay);
-
-/**
- * This function finds the color of the pixel the ray passes through
- * 
- * @param kRay constant reference to a ray to determine the pixel color for
- * @return a color determined by the scene in front of the camera
- */
-color rayColor(const ray& kRay);
