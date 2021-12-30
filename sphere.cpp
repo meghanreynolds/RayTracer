@@ -34,7 +34,8 @@ bool sphere::wasHit(const ray& kRay, double min_t, double max_t, HitRecord& hit_
     hit_record.t_ = root;
     point3 point_of_intersection = kRay.at(root);
     hit_record.point_of_intersection_ = kRay.at(root);
-    hit_record.surface_normal_ = unitVector(point_of_intersection - center_);
+    const vec3 kOutwardNormal = unitVector(point_of_intersection - center_);
+    hit_record.setFaceNormal(kRay, kOutwardNormal);
     return true;
   }
 }
