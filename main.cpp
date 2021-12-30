@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 
+#include "constants_and_utilities.h"
 #include "Hittable.h"
 #include "hittable_list.h"
 #include "hittable_list.cpp"
@@ -14,25 +15,17 @@
 
 
 
-color rayColor(const ray& kRay) {
-  // create sphere to add to the scene
-  const point3 kSphereCenter = point3(0, 0, -1);
-  const double kSphereRadius = 0.5;
-  sphere sphere_one = sphere(kSphereCenter, kSphereRadius);
-  
-  // create list of objects in the scene and find closest hit object 
-  hittable_list list = hittable_list(std::make_shared<sphere>(sphere_one));
+color rayColor(const ray& kRay, const Hittable& objects) {
+  // find closest hit object (if an object was hit)
   HitRecord hit_record = HitRecord();
-  const bool kWasHit = list.wasHit(kRay, 0, 1, hit_record);
-  const double kT = hit_record.t_;
+  const bool kWasHit = objects.wasHit(kRay, 0, infinity, hit_record);
 
   // ensure the ray hits an object before visualizing surface normals
   if (kWasHit) {
     const vec3 kUnitSurfaceNormal = hit_record.surface_normal_;
     // adding 1 to each component ensures each component >= 0 and 
     // multiplting by 0.5 ensures each component <= 1
-    return color(kUnitSurfaceNormal.x() + 1, kUnitSurfaceNormal.y() + 1, 
-        kUnitSurfaceNormal.z() + 1) * 0.5;
+    return (kUnitSurfaceNormal + color(1, 1, 1)) * 0.5;
   }
 
   // otherwise ray is through background (blue-white gradient) pixel
@@ -47,7 +40,7 @@ color rayColor(const ray& kRay) {
   return (kWhite * (1.0 - t)) + (kLightBlue * t);
 }
 
-void basicSphere(std::string file_name) {
+void normalSphereWithGround(std::string file_name) {
   std::ofstream image_file = std::ofstream(file_name, std::ios::ate);
   if (image_file.is_open()){
     // P3 means that the colors are in ASCII
@@ -57,6 +50,10 @@ void basicSphere(std::string file_name) {
     const int kImageWidth = 400;
     const int kImageHeight = static_cast<int>(kImageWidth / kAspectRatio);
     image_file << kImageWidth << " " << kImageHeight << "\n";
+    // Create World with 2 spheres (first is colorful sphere and second represents green ground)
+    hittable_list world = hittable_list(std::make_shared<sphere>(point3(0, 0, -1), 0.5));
+    world.add(std::make_shared<sphere>(point3(0, -100.5, -1), 100));
+
     // Camera Specifications
     const double kViewportHeight = 2.0;
     const double kViewportWidth = kAspectRatio * kViewportHeight;
@@ -83,7 +80,8 @@ void basicSphere(std::string file_name) {
             + (kVerticalDirection * kVerticalFactor) - kOrigin;
         const ray kRay = ray(kOrigin, kRayDirection);
         // add pixel to the ppm file
-        writeColor(image_file, rayColor(kRay));
+        const color kPixelColor = rayColor(kRay, world);
+        writeColor(image_file, kPixelColor);
       }
     }
   }
@@ -127,6 +125,6 @@ void outputBasicImageToFile(std::string file_name) {
 
 int main() {
   outputBasicImageToFile("results/basicImage.ppm");
-  basicSphere("results/visualizingSurfaceNormals.ppm");
+  normalSphereWithGround("results/normalSphereWithGround.ppm");
   return 0;
 }
