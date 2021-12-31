@@ -222,9 +222,12 @@ inline vec3 unitVector(vec3 vector);
 
 /**
  * Adds the given color's [0, 255] values to the given stream
+ * Accounts for Antialiasing Sampling
  * 
  * @param stream a reference to a stream to add the given color's [0,255]
  *     values to
  * @param pixel_color a color to add it's [0, 255] values to the given stream
+ * @param num_samples double representing the number of samples taken for the 
+ *     pixel color
  */
-void writeColor(std::ostream& stream, color pixel_color);
+void writeColor(std::ostream& stream, color pixel_color, double num_samples);

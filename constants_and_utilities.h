@@ -42,3 +42,23 @@ inline double random_double() {
 inline double random_double(double min, double max) {
   return min + (random_double() * (max - min));
 }
+
+/**
+ * Function that ensures given value falls within [min, max] by changing
+ * values < min to min and values > max to max
+ * 
+ * @param value the value to ensure that it falls within the given inclusive range
+ * @param min the minimum (inclusive) value for the given value
+ * @param max the maximum (inclusive) value for the given value
+ * @return the value modified to be within the given inclusive range
+ *     if < min, reuturns min; if > max returns max; otherwise returns 
+ *     the given value
+ */
+inline double clamp (double value, double min, double max) {
+  if (value < min) {
+    return min;
+  } else if (value > max) {
+    return max;
+  }
+  return value;
+}

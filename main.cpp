@@ -55,25 +55,30 @@ void normalSphereWithGround(std::string file_name) {
     // Create World with 2 spheres (first is colorful sphere and second represents green ground)
     hittable_list world = hittable_list(std::make_shared<sphere>(point3(0, 0, -1), 0.5));
     world.add(std::make_shared<sphere>(point3(0, -100.5, -1), 100));
-
     // add a camera to the scene
     const camera kCameraOne = camera();
 
     // Specifies the max color for the RGB triplets
     const int kMaxColor = 255;
     image_file << kMaxColor << "\n";
+    // Specifies number of color samples to take per pixel
+    const int kNumSamplesPerPixel = 100;
 
     // Write RGB triplets to the file
     // pixels are written out in rows from top to bottom that go left to right
     for (int i = kImageHeight - 1; i >= 0; --i) {
       std::cerr << "\rScanlines remaining: " << i << ' ' << std::flush;
       for (int j = 0; j < kImageWidth; ++j) {
-        const double kHorizontalFactor = double(j) / (kImageWidth - 1);
-        const double kVerticalFactor = double(i) / (kImageHeight - 1);
-        const ray kRay = kCameraOne.getRay(kHorizontalFactor, kVerticalFactor);
-        // add pixel to the ppm file
-        const color kPixelColor = rayColor(kRay, world);
-        writeColor(image_file, kPixelColor);
+        // antialiasing sampling
+        color pixel_color = color(); // defaults to zero vector
+        for (int k = 0; k < kNumSamplesPerPixel; ++k) {
+          const double kHorizontalFactor = (j + random_double()) / (kImageWidth - 1);
+          const double kVerticalFactor = (i + random_double()) / (kImageHeight - 1);
+          const ray kRay = kCameraOne.getRay(kHorizontalFactor, kVerticalFactor);
+          pixel_color += rayColor(kRay, world);
+        }
+        // add pixel to the ppm file 
+        writeColor(image_file, pixel_color, kNumSamplesPerPixel);
       }
     }
   }
@@ -107,7 +112,7 @@ void outputBasicImageToFile(std::string file_name) {
 
         const color kPixelColor = color(kRed, kGreen, kBlue);
         // add pixel to the ppm file
-        writeColor(image_file, kPixelColor);
+        writeColor(image_file, kPixelColor, 1);
       }
     }
   }

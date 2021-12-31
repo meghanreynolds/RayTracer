@@ -100,8 +100,17 @@ inline vec3 unitVector(vec3 vector) {
   return vector / vector.length();
 }
 
-void writeColor(std::ostream& stream, color pixel_color) {
-  stream << static_cast<int>(255.999 * pixel_color.x()) << ' ' 
-      << static_cast<int>(255.999 * pixel_color.y()) << ' '
-      << static_cast<int>(255.999 * pixel_color.z()) << '\n';
+void writeColor(std::ostream& stream, color pixel_color, double num_samples) {
+  double r = pixel_color.x();
+  double g = pixel_color.y();
+  double b = pixel_color.z();
+
+  // account for antialiasing sampling
+  r /= num_samples;
+  g /= num_samples;
+  b /= num_samples;
+
+  stream << static_cast<int>(256 * clamp(r, 0.0, 0.999)) << ' ' 
+      << static_cast<int>(256 * clamp(g, 0.0, 0.999)) << ' '
+      << static_cast<int>(256 * clamp(b, 0.0, 0.999)) << '\n';
 }
