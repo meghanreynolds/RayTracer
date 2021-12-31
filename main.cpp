@@ -2,6 +2,8 @@
 #include <fstream>
 #include <string>
 
+#include "camera.h"
+#include "camera.cpp"
 #include "constants_and_utilities.h"
 #include "Hittable.h"
 #include "hittable_list.h"
@@ -54,16 +56,8 @@ void normalSphereWithGround(std::string file_name) {
     hittable_list world = hittable_list(std::make_shared<sphere>(point3(0, 0, -1), 0.5));
     world.add(std::make_shared<sphere>(point3(0, -100.5, -1), 100));
 
-    // Camera Specifications
-    const double kViewportHeight = 2.0;
-    const double kViewportWidth = kAspectRatio * kViewportHeight;
-    const double kFocalLength = 1.0;
-
-    const point3 kOrigin = point3(); // point3 defaults to be the zero vector
-    const vec3 kHorizontalDirection = vec3(kViewportWidth, 0, 0);
-    const vec3 kVerticalDirection = vec3(0, kViewportHeight, 0);
-    const point3 kLowerLeftCorner = kOrigin - (kHorizontalDirection / 2) - (kVerticalDirection / 2)
-        - vec3(0, 0, kFocalLength);
+    // add a camera to the scene
+    const camera kCameraOne = camera();
 
     // Specifies the max color for the RGB triplets
     const int kMaxColor = 255;
@@ -76,9 +70,7 @@ void normalSphereWithGround(std::string file_name) {
       for (int j = 0; j < kImageWidth; ++j) {
         const double kHorizontalFactor = double(j) / (kImageWidth - 1);
         const double kVerticalFactor = double(i) / (kImageHeight - 1);
-        const vec3 kRayDirection = kLowerLeftCorner + (kHorizontalDirection * kHorizontalFactor) 
-            + (kVerticalDirection * kVerticalFactor) - kOrigin;
-        const ray kRay = ray(kOrigin, kRayDirection);
+        const ray kRay = kCameraOne.getRay(kHorizontalFactor, kVerticalFactor);
         // add pixel to the ppm file
         const color kPixelColor = rayColor(kRay, world);
         writeColor(image_file, kPixelColor);
