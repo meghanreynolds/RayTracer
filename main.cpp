@@ -21,7 +21,9 @@
 color rayColor(const ray& kRay, const Hittable& objects, size_t depth) {
   // find closest hit object (if an object was hit)
   HitRecord hit_record = HitRecord();
-  const bool kWasHit = objects.wasHit(kRay, 0, infinity, hit_record);
+  // ignore hits that are extremely close to 0 to fix shadow acne 
+  const double kMinT = 0.001;
+  const bool kWasHit = objects.wasHit(kRay, kMinT, infinity, hit_record);
 
   // ensure the ray hits an object before adding diffuse material
   if (kWasHit) {

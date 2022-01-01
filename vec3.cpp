@@ -105,10 +105,10 @@ void writeColor(std::ostream& stream, color pixel_color, double num_samples) {
   double g = pixel_color.y();
   double b = pixel_color.z();
 
-  // account for antialiasing sampling
-  r /= num_samples;
-  g /= num_samples;
-  b /= num_samples;
+  // account for antialiasing sampling and gamma-correct for gamma = 2.0
+  r =  std::sqrt(r / num_samples);
+  g =  std::sqrt(g / num_samples);
+  b =  std::sqrt(b / num_samples);
 
   stream << static_cast<int>(256 * clamp(r, 0.0, 0.999)) << ' ' 
       << static_cast<int>(256 * clamp(g, 0.0, 0.999)) << ' '
