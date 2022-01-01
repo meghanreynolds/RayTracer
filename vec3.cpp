@@ -114,3 +114,21 @@ void writeColor(std::ostream& stream, color pixel_color, double num_samples) {
       << static_cast<int>(256 * clamp(g, 0.0, 0.999)) << ' '
       << static_cast<int>(256 * clamp(b, 0.0, 0.999)) << '\n';
 }
+
+inline vec3 randomVector() {
+  return vec3(randomDouble(), randomDouble(), randomDouble());
+}
+
+inline vec3 randomVector(double min, double max) {
+  return vec3(randomDouble(min, max), randomDouble(min, max), 
+      randomDouble(min, max));
+}
+
+point3 randomPointInUnitSphere() {
+  while (true) {
+    const point3 kRandomPoint = randomVector(-1, 1);
+    if (kRandomPoint.lengthSquared() < 1) {
+      return kRandomPoint;
+    }
+  }
+}

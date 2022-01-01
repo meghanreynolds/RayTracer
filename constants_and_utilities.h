@@ -25,12 +25,7 @@ inline double degrees_to_radians(double degrees) {
  * 
  * @return double representing a random real in range [0,1)
  */
-inline double random_double() {
-  static std::uniform_real_distribution<double> random_distribution 
-      = std::uniform_real_distribution<double>(0.0, 1.0);
-  static std::mt19937 random_generator;
-  return random_distribution(random_generator);
-}
+inline double randomDouble();
 
 /**
  * Returns random real number in range [min, max)
@@ -39,8 +34,8 @@ inline double random_double() {
  * @param max the maximum (non-inclusive) value for the random real
  * @return double representing a random real in range [min, max)
  */
-inline double random_double(double min, double max) {
-  return min + (random_double() * (max - min));
+inline double randomDouble(double min, double max) {
+  return min + (randomDouble() * (max - min));
 }
 
 /**
@@ -54,11 +49,4 @@ inline double random_double(double min, double max) {
  *     if < min, reuturns min; if > max returns max; otherwise returns 
  *     the given value
  */
-inline double clamp (double value, double min, double max) {
-  if (value < min) {
-    return min;
-  } else if (value > max) {
-    return max;
-  }
-  return value;
-}
+inline double clamp(double value, double min, double max);

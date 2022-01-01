@@ -5,6 +5,7 @@
 #include "camera.h"
 #include "camera.cpp"
 #include "constants_and_utilities.h"
+#include "constants_and_utilities.cpp"
 #include "Hittable.h"
 #include "hittable_list.h"
 #include "hittable_list.cpp"
@@ -17,17 +18,25 @@
 
 
 
-color rayColor(const ray& kRay, const Hittable& objects) {
+color rayColor(const ray& kRay, const Hittable& objects, size_t depth) {
   // find closest hit object (if an object was hit)
   HitRecord hit_record = HitRecord();
   const bool kWasHit = objects.wasHit(kRay, 0, infinity, hit_record);
 
-  // ensure the ray hits an object before visualizing surface normals
+  // ensure the ray hits an object before adding diffuse material
   if (kWasHit) {
-    const vec3 kUnitSurfaceNormal = hit_record.surface_normal_;
-    // adding 1 to each component ensures each component >= 0 and 
-    // multiplting by 0.5 ensures each component <= 1
-    return (kUnitSurfaceNormal + color(1, 1, 1)) * 0.5;
+    const point3 kRandomPointInTangentUnitSphere = hit_record.point_of_intersection_ 
+        + hit_record.surface_normal_ + randomPointInUnitSphere();
+    const ray kRandomRay = ray(hit_record.point_of_intersection_, kRandomPointInTangentUnitSphere 
+        - hit_record.point_of_intersection_);
+        
+    if (depth > 0) {
+      // multiplting by 0.5 ensures each component <= 1
+      return rayColor(kRandomRay, objects, depth - 1) * 0.5;
+    } else {
+      // after ray bounce limit is exceeded, return no light
+      return color(0, 0, 0);
+    }
   }
 
   // otherwise ray is through background (blue-white gradient) pixel
@@ -42,7 +51,7 @@ color rayColor(const ray& kRay, const Hittable& objects) {
   return (kWhite * (1.0 - t)) + (kLightBlue * t);
 }
 
-void normalSphereWithGround(std::string file_name) {
+void diffuseSphere(std::string file_name) {
   std::ofstream image_file = std::ofstream(file_name, std::ios::ate);
   if (image_file.is_open()){
     // P3 means that the colors are in ASCII
@@ -72,10 +81,11 @@ void normalSphereWithGround(std::string file_name) {
         // antialiasing sampling
         color pixel_color = color(); // defaults to zero vector
         for (int k = 0; k < kNumSamplesPerPixel; ++k) {
-          const double kHorizontalFactor = (j + random_double()) / (kImageWidth - 1);
-          const double kVerticalFactor = (i + random_double()) / (kImageHeight - 1);
+          const double kHorizontalFactor = (j + randomDouble()) / (kImageWidth - 1);
+          const double kVerticalFactor = (i + randomDouble()) / (kImageHeight - 1);
           const ray kRay = kCameraOne.getRay(kHorizontalFactor, kVerticalFactor);
-          pixel_color += rayColor(kRay, world);
+          const size_t kMaxNumRayBounces = 50;
+          pixel_color += rayColor(kRay, world, kMaxNumRayBounces);
         }
         // add pixel to the ppm file 
         writeColor(image_file, pixel_color, kNumSamplesPerPixel);
@@ -122,6 +132,6 @@ void outputBasicImageToFile(std::string file_name) {
 
 int main() {
   outputBasicImageToFile("results/basicImage.ppm");
-  normalSphereWithGround("results/normalSphereWithGround.ppm");
+  diffuseSphere("results/diffuseSphere.ppm");
   return 0;
 }

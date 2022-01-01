@@ -2,6 +2,8 @@
 
 #include <cmath>
 
+#include "constants_and_utilities.h"
+
 /**
  * class representing a 3D vector
  */
@@ -231,3 +233,31 @@ inline vec3 unitVector(vec3 vector);
  *     pixel color
  */
 void writeColor(std::ostream& stream, color pixel_color, double num_samples);
+
+/**
+ * Returns a random vector
+ * 
+ * @return a random vector where x, y, and z components are 
+ *     in range [0, 1)
+ */
+inline vec3 randomVector();
+
+/**
+ * Returns a random vector where x, y, and z components are in
+ * range [min, max)
+ * 
+ * @param min the minimum (inclusive) value for the x, y,
+ *     and z componnets
+ * @param max the maximum (non-inclusive) value for the x, y
+ *     and z components
+ * @return a random vector where x, y, and z components are in
+ *     the range [min, max)
+ */
+inline vec3 randomVector(double min, double max);
+
+/**
+ * Returns a random point in the unit sphere
+ * 
+ * @return a point3 representing a random point in the unit sphere
+ */
+point3 randomPointInUnitSphere();
