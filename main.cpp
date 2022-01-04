@@ -28,7 +28,7 @@ color rayColor(const ray& kRay, const Hittable& objects, size_t depth) {
   // ensure the ray hits an object before adding diffuse material
   if (kWasHit) {
     const point3 kRandomPointInTangentUnitSphere = hit_record.point_of_intersection_ 
-        + hit_record.surface_normal_ + randomPointInUnitSphere();
+        + hit_record.surface_normal_ + randomUnitVector();
     const ray kRandomRay = ray(hit_record.point_of_intersection_, kRandomPointInTangentUnitSphere 
         - hit_record.point_of_intersection_);
         

@@ -124,11 +124,15 @@ inline vec3 randomVector(double min, double max) {
       randomDouble(min, max));
 }
 
-point3 randomPointInUnitSphere() {
+inline point3 randomPointInUnitSphere() {
   while (true) {
     const point3 kRandomPoint = randomVector(-1, 1);
     if (kRandomPoint.lengthSquared() < 1) {
       return kRandomPoint;
     }
   }
+}
+
+vec3 randomUnitVector() {
+  return unitVector(randomPointInUnitSphere());
 }

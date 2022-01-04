@@ -260,4 +260,11 @@ inline vec3 randomVector(double min, double max);
  * 
  * @return a point3 representing a random point in the unit sphere
  */
-point3 randomPointInUnitSphere();
+inline point3 randomPointInUnitSphere();
+
+/**
+ * Returns a random unit vector
+ * 
+ * @return a vec3 representing a random unit vector
+ */
+vec3 randomUnitVector();
