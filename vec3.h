@@ -104,6 +104,13 @@ class vec3 {
      */
     double lengthSquared() const;
 
+    /**
+     * Returns true if the vector is close to 0 in all directions
+     * 
+     * @return true if the vector is close to 0 in all directions and false otherwise
+     */
+    bool nearZero() const;
+
   private:
     /**
      * Array of doubles storing the data in the vec3
@@ -268,3 +275,14 @@ inline point3 randomPointInUnitSphere();
  * @return a vec3 representing a random unit vector
  */
 vec3 randomUnitVector();
+
+/**
+ * Computes the the reflected ray of kV off of a surface with unit normal kN
+ * 
+ * @param kRayToReflect a constant reference to a vec3 representing the ray to be reflected
+ * @param kNormal a constant reference to a vec3 representing the unit normal of the surface
+ *     that kV is reflected off of
+ * @return a vec3 representing the reflected ray of kV off of a surface
+ *     with unit normal kN
+ */
+vec3 reflect(const vec3& kRayToReflect, const vec3& kNormal);

@@ -18,8 +18,9 @@ class sphere : public Hittable {
      * 
      * @param center point3 representing the center of the sphere to create
      * @param radius double representing the radius of the sphere to create
+     * @param material_ptr a shared pointer to the class of the material of the sphere 
      */
-    sphere(point3 center, double radius);
+    sphere(point3 center, double radius, std::shared_ptr<Material> material_ptr);
 
     // see hittable docs
     virtual bool wasHit(const ray& kRay, double min_t, double max_t, 
@@ -30,4 +31,6 @@ class sphere : public Hittable {
     point3 center_;
     // double representing the radius of the sphere
     double radius_;
+    // shared pointer to the class of the material of the sphere
+    std::shared_ptr<Material> material_ptr_;
 };

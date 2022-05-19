@@ -1,7 +1,8 @@
 #include "Hittable.h"
 #include "sphere.h"
 
-sphere::sphere(point3 center, double radius) : center_(center), radius_(radius) {}
+sphere::sphere(point3 center, double radius, std::shared_ptr<Material> material_ptr) : center_(center), 
+    radius_(radius), material_ptr_(material_ptr) {}
 
 bool sphere::wasHit(const ray& kRay, double min_t, double max_t, HitRecord& hit_record) const {
   const vec3 kRayDirection = kRay.direction();
@@ -36,6 +37,7 @@ bool sphere::wasHit(const ray& kRay, double min_t, double max_t, HitRecord& hit_
     hit_record.point_of_intersection_ = kRay.at(root);
     const vec3 kOutwardNormal = unitVector(point_of_intersection - center_);
     hit_record.setFaceNormal(kRay, kOutwardNormal);
+    hit_record.material_pointer = material_ptr_;
     return true;
   }
 }

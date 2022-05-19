@@ -59,6 +59,12 @@ double vec3::lengthSquared() const {
   return (data_[x_index_] * data_[x_index_]) + (data_[y_index_] * data_[y_index_]) + (data_[z_index_] * data_[z_index_]);
 }
 
+bool vec3::nearZero() const {
+  const double kValueCloseToZero = 1e-8;
+  return std::fabs(data_[x_index_] < kValueCloseToZero) && std::fabs(data_[y_index_] < kValueCloseToZero)
+    && std::fabs(data_[z_index_] < kValueCloseToZero);
+}
+
 inline std::ostream& operator<<(std::ostream& stream, const vec3& kVectorToPrint) {
   stream << kVectorToPrint.x() << ' ' << kVectorToPrint.y() << ' ' << kVectorToPrint.z();
   return stream;
@@ -135,4 +141,8 @@ inline point3 randomPointInUnitSphere() {
 
 vec3 randomUnitVector() {
   return unitVector(randomPointInUnitSphere());
+}
+
+vec3 reflect(const vec3& kRayToReflect, const vec3& kNormal) {
+  return kRayToReflect - kNormal * (dot(kRayToReflect, kNormal) * 2);
 }

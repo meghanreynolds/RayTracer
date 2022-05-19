@@ -3,6 +3,8 @@
 #include "ray.h"
 #include "vec3.h"
 
+class Material;
+
 /**
  * Struct storing the point of intersection, surface normal, 
  * and t value of a ray hitting a hittable object
@@ -10,10 +12,16 @@
 struct HitRecord {
   // point3 representing the point of intersection of the ray and hittable object
   point3 point_of_intersection_;
+
   // vec3 representing the surface normal 
   vec3 surface_normal_;
+
+  // shared pointer to the class of the material of the hit object
+  std::shared_ptr<Material> material_pointer;
+
   // double representing the t value at which the intersection occurs
   double t_;
+
   // bool that is true if the ray is front facing (insersects the hittable obect from the inside)
   bool front_facing_;
 

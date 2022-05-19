@@ -1,0 +1,87 @@
+#pragma once
+
+/**
+ * Abstract Class representing a Material
+ */
+class Material {
+  public:
+    virtual ~Material() {}
+    /**
+     * Scatters or absorbs the given ray and returns how much the ray has been 
+     * attenuated (reduced in force) as well as the scattered ray
+     * 
+     * @param kRay a constant reference to a ray to be scattered 
+     * @param kHitRecord a constant reference to a HitRecord storing the point of intersection, surface normal, 
+     *     and t value of a ray hitting a hittable object
+     * @param attenuation a reference to a color to be updated with how much the given ray is attenuated
+     * @param scattered_ray a reference to a ray to be updated with the scattered ray
+     * @return a bool that is true if the ray was scattered and false if the ray was absorbed
+     */
+    virtual bool scatter(const ray& kRay, const HitRecord& kHitRecord, 
+        color& attenuation, ray& scattered_ray) const = 0;
+};
+
+/**
+ * Class representing a Lambertian (diffuse) Material
+ */
+class Lambertian : public Material {
+  public:
+    /**
+     * Constructor that sets the lambertian material's albedo to the given albedo
+     * 
+     * @param albedo_ constant reference to a color representing the laberian material's albedo
+     */ 
+    Lambertian(const color& kAlbedo) : albedo_(kAlbedo) {}
+
+    // see Material class docs
+    virtual bool scatter(const ray& kRay, const HitRecord& kHitRecord, 
+        color& attenuation, ray& scattered_ray) const override {
+      vec3 scatter_direction = kHitRecord.surface_normal_ + randomUnitVector();
+      // guard against scatter direction that is close to 0
+      if (scatter_direction.nearZero()) {
+        scatter_direction = kHitRecord.surface_normal_;
+      }
+      scattered_ray = ray(kHitRecord.point_of_intersection_, scatter_direction);
+      attenuation = albedo_;
+      return true;
+    }
+
+  private:
+    // color that stores the Lambertian Material's albedo (ability to reflect sunlight)
+    color albedo_;
+};
+
+/**
+ * Class representing a Metal Material
+ */
+class Metal : public Material {
+  public:
+    /**
+     * Constructor that sets the metal material's albedo to the given albedo
+     * 
+     * @param albedo constant reference to a color representing the metal material's albedo
+     * @param fuzziness double representing how fuzzy the metal's reflection is
+     */ 
+    Metal(const color& kAlbedo, double fuzziness) : albedo_(kAlbedo) {
+      if (fuzziness >= 1) {
+        fuzziness_ = 1;
+      } else {
+        fuzziness_ = fuzziness;
+      }
+    }
+
+    // see Material class docs
+    virtual bool scatter(const ray& kRay, const HitRecord& kHitRecord, 
+        color& attenuation, ray& scattered_ray) const override {
+      const vec3 kReflectedRay = reflect(unitVector(kRay.direction()), kHitRecord.surface_normal_);
+      scattered_ray = ray(kHitRecord.point_of_intersection_, kReflectedRay 
+        + randomPointInUnitSphere() * fuzziness_);
+      attenuation = albedo_;
+      return (dot(scattered_ray.direction(), kHitRecord.surface_normal_) > 0);
+    }
+  private:
+    // color that stores the Metal Material's albedo (ability to reflect sunlight)
+    color albedo_;
+    // double storing how fuzzy the reflection is (1 is completely fuzzy, 0 is no fuzziness)
+    double fuzziness_;
+};

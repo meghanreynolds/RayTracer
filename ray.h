@@ -11,7 +11,7 @@ class ray {
      * Default Constructor
      * Sets origin and direction to zero vectors
      */
-    ray();
+    ray() {};
 
     /**
      * Constructor sets origin_ to the given origin and

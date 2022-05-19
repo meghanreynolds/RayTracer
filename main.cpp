@@ -9,6 +9,7 @@
 #include "Hittable.h"
 #include "hittable_list.h"
 #include "hittable_list.cpp"
+#include "Material.h"
 #include "ray.h"
 #include "ray.cpp"
 #include "sphere.h"
@@ -21,22 +22,23 @@
 color rayColor(const ray& kRay, const Hittable& objects, size_t depth) {
   // find closest hit object (if an object was hit)
   HitRecord hit_record = HitRecord();
+
+  // return no light after the bounce limit has been exceeded 
+  if (depth <= 0) {
+    return color(0, 0, 0);
+  }
+
   // ignore hits that are extremely close to 0 to fix shadow acne 
   const double kMinT = 0.001;
   const bool kWasHit = objects.wasHit(kRay, kMinT, infinity, hit_record);
 
-  // ensure the ray hits an object before adding diffuse material
+  // if an object is hit, scatter the light according to the material of the hit object
   if (kWasHit) {
-    const point3 kRandomPointInTangentUnitSphere = hit_record.point_of_intersection_ 
-        + hit_record.surface_normal_ + randomUnitVector();
-    const ray kRandomRay = ray(hit_record.point_of_intersection_, kRandomPointInTangentUnitSphere 
-        - hit_record.point_of_intersection_);
-        
-    if (depth > 0) {
-      // multiplting by 0.5 ensures each component <= 1
-      return rayColor(kRandomRay, objects, depth - 1) * 0.5;
+    ray scattered_ray;
+    color attenuation;
+    if (hit_record.material_pointer->scatter(kRay, hit_record, attenuation, scattered_ray)) {
+      return attenuation * rayColor(scattered_ray, objects, depth - 1);
     } else {
-      // after ray bounce limit is exceeded, return no light
       return color(0, 0, 0);
     }
   }
@@ -53,7 +55,7 @@ color rayColor(const ray& kRay, const Hittable& objects, size_t depth) {
   return (kWhite * (1.0 - t)) + (kLightBlue * t);
 }
 
-void diffuseSphere(std::string file_name) {
+void metalSpheres(std::string file_name) {
   std::ofstream image_file = std::ofstream(file_name, std::ios::ate);
   if (image_file.is_open()){
     // P3 means that the colors are in ASCII
@@ -63,9 +65,21 @@ void diffuseSphere(std::string file_name) {
     const int kImageWidth = 400;
     const int kImageHeight = static_cast<int>(kImageWidth / kAspectRatio);
     image_file << kImageWidth << " " << kImageHeight << "\n";
-    // Create World with 2 spheres (first is colorful sphere and second represents green ground)
-    hittable_list world = hittable_list(std::make_shared<sphere>(point3(0, 0, -1), 0.5));
-    world.add(std::make_shared<sphere>(point3(0, -100.5, -1), 100));
+
+    // Create World with 4 spheres
+    hittable_list world = hittable_list();
+    const std::shared_ptr<Lambertian> kMaterialGround = std::make_shared<Lambertian>(color(0.8, 0.8, 0.0));
+    const std::shared_ptr<Lambertian> kMaterialCenterDiffuseSphere = std::make_shared<Lambertian>(color(0.7, 0.3, 0.3));
+    // metal sphere with relatively clear reflection
+    const std::shared_ptr<Metal> kMaterialLeftMetalSphere = std::make_shared<Metal>(color(0.8, 0.8, 0.8), 0.3);
+    // metal sphere with very fuzzy reflection
+    const std::shared_ptr<Metal> kMaterialRightMetalSphere = std::make_shared<Metal>(color(0.8, 0.6, 0.2), 1.0);
+    
+    world.add(std::make_shared<sphere>(point3(0, -100.5, -1), 100, kMaterialGround));
+    world.add(std::make_shared<sphere>(point3(0.0, 0.0, -1.0), 0.5, kMaterialCenterDiffuseSphere));
+    world.add(std::make_shared<sphere>(point3(-1.0, 0.0, -1.0), 0.5, kMaterialLeftMetalSphere));
+    world.add(std::make_shared<sphere>(point3(1.0, 0.0, -1.0), 0.5, kMaterialRightMetalSphere));
+
     // add a camera to the scene
     const camera kCameraOne = camera();
 
@@ -134,6 +148,6 @@ void outputBasicImageToFile(std::string file_name) {
 
 int main() {
   outputBasicImageToFile("results/basicImage.ppm");
-  diffuseSphere("results/diffuseSphere.ppm");
+  metalSpheres("results/metalSpheres.ppm");
   return 0;
 }
