@@ -62,7 +62,7 @@ double vec3::lengthSquared() const {
 bool vec3::nearZero() const {
   const double kValueCloseToZero = 1e-8;
   return std::fabs(data_[x_index_] < kValueCloseToZero) && std::fabs(data_[y_index_] < kValueCloseToZero)
-    && std::fabs(data_[z_index_] < kValueCloseToZero);
+     && std::fabs(data_[z_index_] < kValueCloseToZero);
 }
 
 inline std::ostream& operator<<(std::ostream& stream, const vec3& kVectorToPrint) {
@@ -145,4 +145,13 @@ vec3 randomUnitVector() {
 
 vec3 reflect(const vec3& kRayToReflect, const vec3& kNormal) {
   return kRayToReflect - kNormal * (dot(kRayToReflect, kNormal) * 2);
+}
+
+vec3 refract(const vec3& kRayToRefract, const vec3& kNormal, const double kEtaIntialOverEtaFinal) {
+  const double kCosTheta = std::fmin(dot(-kRayToRefract, kNormal), 1.0);
+  const vec3 kPerpendicularComponentRefractedRay =(kRayToRefract + (kNormal * kCosTheta))
+      *  kEtaIntialOverEtaFinal;
+  const vec3 kParallelComponentRefractedRay = kNormal * (-std::sqrt(std::fabs(1.0 
+      - kPerpendicularComponentRefractedRay.lengthSquared())));
+  return kPerpendicularComponentRefractedRay + kParallelComponentRefractedRay;
 }

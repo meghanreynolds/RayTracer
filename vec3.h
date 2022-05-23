@@ -277,12 +277,25 @@ inline point3 randomPointInUnitSphere();
 vec3 randomUnitVector();
 
 /**
- * Computes the the reflected ray of kV off of a surface with unit normal kN
+ * Computes the the reflected ray of the given ray off of a surface with the given surface normal
  * 
  * @param kRayToReflect a constant reference to a vec3 representing the ray to be reflected
- * @param kNormal a constant reference to a vec3 representing the unit normal of the surface
- *     that kV is reflected off of
- * @return a vec3 representing the reflected ray of kV off of a surface
- *     with unit normal kN
+ * @param kNormal a constant reference to a vec3 representing the surface normal of the surface
+ *     that the given ray is reflected off of
+ * @return a vec3 representing the reflected ray of the given ray off of a surface
+ *     with the given surface normal
  */
 vec3 reflect(const vec3& kRayToReflect, const vec3& kNormal);
+
+/**
+ * Computes the refracted ray of the given ray with a surface with the given surface normal
+ * and the given value of 𝜂/𝜂'
+ * 
+ * @param kRayToRefract a constant reference to a vec3 representing the ray to be refracted
+ * @param kNormal a constant reference to a vec3 representing the surface normal of the surface for
+ *     the given ray to refract with
+ * @param kEtaIntialOverEtaFinal a constant double representing the value of 𝜂/𝜂' for the refraction
+ * @return a vec3 representing the refracted ray of the given ray with a surface with the given
+ *     surface normal and the given value of 𝜂/𝜂'
+ */
+vec3 refract(const vec3& kRayToRefract, const vec3& kNormal, const double kEtaIntialOverEtaFinal);

@@ -75,13 +75,58 @@ class Metal : public Material {
         color& attenuation, ray& scattered_ray) const override {
       const vec3 kReflectedRay = reflect(unitVector(kRay.direction()), kHitRecord.surface_normal_);
       scattered_ray = ray(kHitRecord.point_of_intersection_, kReflectedRay 
-        + randomPointInUnitSphere() * fuzziness_);
+          + randomPointInUnitSphere() * fuzziness_);
       attenuation = albedo_;
       return (dot(scattered_ray.direction(), kHitRecord.surface_normal_) > 0);
     }
+
   private:
     // color that stores the Metal Material's albedo (ability to reflect sunlight)
     color albedo_;
     // double storing how fuzzy the reflection is (1 is completely fuzzy, 0 is no fuzziness)
     double fuzziness_;
+};
+
+/**
+ * Class that reprents a Dielectric Material that always refracts
+ */
+class Dielectric : public Material {
+  public:
+    /**
+     * Constructor that sets the dielectric material's index of refraction to the given 
+     * index of refraction
+     * 
+     * @param index_of_refraction double representing the index of refraction of the 
+     *    dielectric material
+     */ 
+    Dielectric(double index_of_refraction) : index_of_refraction_(index_of_refraction) {}
+
+    // see Material class docs
+    virtual bool scatter(const ray& kRay, const HitRecord& kHitRecord, 
+        color& attenuation, ray& scattered_ray) const override {
+      attenuation = color(1.0, 1.0, 1.0);
+
+      double refraction_ratio;
+      if (kHitRecord.front_facing_) {
+        refraction_ratio = 1.0 / index_of_refraction_;
+      } else {
+        refraction_ratio = index_of_refraction_;
+      }
+
+      const vec3 kRefractedRay = refract(unitVector(kRay.direction()), kHitRecord.surface_normal_, 
+          refraction_ratio);
+      scattered_ray = ray(kHitRecord.point_of_intersection_, kRefractedRay);
+      return true;
+    }
+
+  private:
+    /** 
+     * Double storing the index of refraction of the dielectric material
+     * 
+     * Common index of refraction values: 
+     *  1.0 ~ air
+     *  1.3 - 1.7 ~ glass
+     *  2.4 ~ diamond
+     */
+    double index_of_refraction_;
 };

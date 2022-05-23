@@ -112,6 +112,63 @@ void metalSpheres(std::string file_name) {
   std::cerr << "\nDone.\n";
 }
 
+void glassSpheres(std::string file_name) {
+  std::ofstream image_file = std::ofstream(file_name, std::ios::ate);
+  if (image_file.is_open()){
+    // P3 means that the colors are in ASCII
+    image_file << "P3\n";
+    // Specifies image width and height
+    const double kAspectRatio = 16.0 / 9.0;
+    const int kImageWidth = 400;
+    const int kImageHeight = static_cast<int>(kImageWidth / kAspectRatio);
+    image_file << kImageWidth << " " << kImageHeight << "\n";
+
+    // Create World with 4 spheres
+    hittable_list world = hittable_list();
+    const std::shared_ptr<Lambertian> kMaterialGround = std::make_shared<Lambertian>(color(0.8, 0.8, 0.0));
+    //  2 glass spheres
+    const std::shared_ptr<Dielectric> kMaterialCenterGlassSphere = std::make_shared<Dielectric>(1.5);
+    const std::shared_ptr<Dielectric> kMaterialLeftGlassSphere = std::make_shared<Dielectric>(1.5);
+    // metal sphere with very fuzzy reflection
+    const std::shared_ptr<Metal> kMaterialRightMetalSphere = std::make_shared<Metal>(color(0.8, 0.6, 0.2), 1.0);
+    
+    world.add(std::make_shared<sphere>(point3(0, -100.5, -1), 100, kMaterialGround));
+    world.add(std::make_shared<sphere>(point3(0.0, 0.0, -1.0), 0.5, kMaterialCenterGlassSphere));
+    world.add(std::make_shared<sphere>(point3(-1.0, 0.0, -1.0), 0.5, kMaterialLeftGlassSphere));
+    world.add(std::make_shared<sphere>(point3(1.0, 0.0, -1.0), 0.5, kMaterialRightMetalSphere));
+
+    // add a camera to the scene
+    const camera kCameraOne = camera();
+
+    // Specifies the max color for the RGB triplets
+    const int kMaxColor = 255;
+    image_file << kMaxColor << "\n";
+    // Specifies number of color samples to take per pixel
+    const int kNumSamplesPerPixel = 100;
+
+    // Write RGB triplets to the file
+    // pixels are written out in rows from top to bottom that go left to right
+    for (int i = kImageHeight - 1; i >= 0; --i) {
+      std::cerr << "\rScanlines remaining: " << i << ' ' << std::flush;
+      for (int j = 0; j < kImageWidth; ++j) {
+        // antialiasing sampling
+        color pixel_color = color(); // defaults to zero vector
+        for (int k = 0; k < kNumSamplesPerPixel; ++k) {
+          const double kHorizontalFactor = (j + randomDouble()) / (kImageWidth - 1);
+          const double kVerticalFactor = (i + randomDouble()) / (kImageHeight - 1);
+          const ray kRay = kCameraOne.getRay(kHorizontalFactor, kVerticalFactor);
+          const size_t kMaxNumRayBounces = 50;
+          pixel_color += rayColor(kRay, world, kMaxNumRayBounces);
+        }
+        // add pixel to the ppm file 
+        writeColor(image_file, pixel_color, kNumSamplesPerPixel);
+      }
+    }
+  }
+  image_file.close();
+  std::cerr << "\nDone.\n";
+}
+
 void outputBasicImageToFile(std::string file_name) {
   std::ofstream image_file = std::ofstream(file_name, std::ios::ate);
   if (image_file.is_open()){
@@ -149,5 +206,6 @@ void outputBasicImageToFile(std::string file_name) {
 int main() {
   outputBasicImageToFile("results/basicImage.ppm");
   metalSpheres("results/metalSpheres.ppm");
+  glassSpheres("results/alwaysRefractingGlassSpheres.ppm");
   return 0;
 }
